@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
   <meta charset="UTF-8">
-  <title>proverka.ai - AI Детектор</title>
+  <title>proverka.co - AI Детектор</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -40,7 +40,7 @@
     }
 
     main {
-      max-width: 720px;
+      max-width: 760px;
       margin: 60px auto;
       background: white;
       padding: 40px;
@@ -108,9 +108,12 @@
     }
 
     .highlight {
-      background: yellow;
-      font-weight: bold;
-    }
+  background-color: #e0e7ff; /* light purple */
+  color: #3730a3;            /* deep indigo text */
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
 
     footer {
       margin-top: 80px;
@@ -173,7 +176,7 @@
 </head>
 <body>
   <header>
-    <div class="logo">proverka.ai</div>
+    <div class="logo">proverka.co</div>
     <div style="font-size: 1.1rem; font-weight: 500; color: #6b7280;">AI Детектор</div>
   </header>
 
@@ -181,7 +184,7 @@
     <h1>Разбери дали текстът е писан от човек или AI</h1>
     <p class="subheading">Бърз инструмент за проверка на съдържание</p>
 
-    <div id="tokenDisplay" class="info">Оставащи токени: --</div>
+    <div id="tokenDisplay" class="info">Оставащи проверки: --</div>
 
     <textarea id="inputText" placeholder="Постави текста си тук..."></textarea>
     <button id="checkBtn">Провери текста</button>
@@ -194,9 +197,9 @@
       <h2>Често задавани въпроси</h2>
   
       <div class="faq-item">
-        <h3>🧠 Какво е proverka.ai?</h3>
+        <h3>🧠 Какво е proverka.co?</h3>
         <p>
-          Proverka.ai е първият български инструмент, който открива дали един текст е написан от човек или създаден от изкуствен интелект. Разработен е от местен екип и е обучен специално за българския език. Нашата мисия е да върнем доверието в писаното слово – в образованието, медиите и професионалната среда.
+          Proverka.co е първият български инструмент, който открива дали един текст е написан от човек или създаден от изкуствен интелект. Разработен е от местен екип и е обучен специално за българския език. Нашата мисия е да върнем доверието в писаното слово – в образованието, медиите и професионалната среда.
       </p>
       </div>
   
@@ -210,9 +213,9 @@
   
       <div class="faq-item">
         <hr style="border: none;">
-        <h3>📊 Какво прави proverka.ai различен?</h3>
+        <h3>📊 Какво прави proverka.co различен?</h3>
         <p>
-          Proverka.ai е разработен и обучен специално за българския език и контекст. Създаден е от български екип с фокус върху точност, надеждност и практическа употреба в образованието и професионалната среда. Нашият алгоритъм се самообучава постоянно, за да предоставя все по-добри резултати.
+          Proverka.co е разработен и обучен специално за българския език и контекст. Създаден е от български екип с фокус върху точност, надеждност и практическа употреба в образованието и професионалната среда. Нашият алгоритъм се самообучава постоянно, за да предоставя все по-добри резултати.
         </p>
       </div>
   
@@ -225,7 +228,7 @@
       </div>
     </div>
     <div style="margin-top: 40px; font-size: 0.75rem; color: #6b7280; text-align: center;">
-      Създадено от Павел Димитров, Никола Костов, Наталия Василева, Тодор Мицин и Кристиян Иванов за AUBG StartUp Weekend! ❤️
+      Създадено от Павел Димитров, Никола Костов, Наталия Василева, Тодор Мицин и Крис Иванов за AUBG StartUp Weekend! ❤️
     </div>
   </footer>
 
@@ -257,6 +260,14 @@
       }
     }
 
+    function getResultLabel(percentage) {
+  const val = Number(percentage);
+  if (val <= 20) return "✅ Човешки текст (0–20%)";
+  if (val <= 49) return "🟡 Смесен текст (Преработен от AI) (21–49%)";
+  if (val <= 79) return "🟠 Вероятно генериран от AI (50–79%)";
+  return "❌ Почти сигурно генериран от AI (80–100%)";
+}
+
     async function detectText() {
       const text = document.getElementById('inputText').value;
       const resultDiv = document.getElementById('resultBox');
@@ -280,14 +291,24 @@
         const special = result.specialSentences || [];
 
         let highlightedText = text;
-        special.forEach(sentence => {
-          const safeSentence = sentence.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          const regex = new RegExp(safeSentence, 'g');
-          highlightedText = highlightedText.replace(regex, `<span class='highlight'>${sentence}</span>`);
-        });
+
+      // Sort longer sentences first to avoid nested replacements
+      special.sort((a, b) => b.length - a.length);
+
+      special.forEach(sentence => {
+        const safeSentence = sentence
+          .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          .replace(/\s+/g, '\\s+'); // Match flexible whitespace
+
+        const regex = new RegExp(safeSentence, 'gi');
+        highlightedText = highlightedText.replace(
+          regex,
+          match => `<span class="highlight">${match}</span>`
+        );
+      });
 
         resultDiv.innerHTML = `
-          <p><strong>Резултат:</strong> ${result.isHuman === 0 ? "❌ Генериран от AI" : "✅ Създаден от човек"}</p>
+          <p><strong>Резултат:</strong> ${getResultLabel(result.fakePercentage)}</p>
           <p><strong>Език:</strong> ${langToFlag(result.detected_language)} (${result.detected_language})</p>
           <p><strong>Процент фалшиво съдържание:</strong> ${result.fakePercentage}%</p>
           <p><strong>Маркиран текст:</strong></p>
