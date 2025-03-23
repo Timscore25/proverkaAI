@@ -73,6 +73,10 @@ class DBConnection:
         else:
             self.cursor.execute('SELECT * FROM request_logs')
             return self.cursor.fetchall()
+        
+    def get_usage(self):
+        self.cursor.execute('SELECT COUNT(request_id) FROM request_logs')
+        return self.cursor.fetchone()[0]
 
     def close(self):
         self.conn.close()

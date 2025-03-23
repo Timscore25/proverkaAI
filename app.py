@@ -13,6 +13,32 @@ API_URL = "https://api.zerogpt.com/api/detect/detectText"
 API_KEY = "16549579-2073-4e51-b90a-eb947682de1f"
 FREE_TOKENS = 100
 
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def home_bg():
+    return render_template("index.html")
+
+@app.route("/gr")
+def home_gr():
+    return render_template("index_gr.html")
+
+@app.route("/ro")
+def home_ro():
+    return render_template("index_ro.html")
+
+@app.route("/rs")
+def home_sr():
+    return render_template("index_rs.html")
+
+@app.route("/mk")
+def home_mk():
+    return render_template("index_mk.html")
+
+# Add more routes as needed
+
 @app.before_request
 def assign_udid():
     user_udid = request.cookies.get('udid')
@@ -115,10 +141,17 @@ def get_recent_requests():
         "requests": requests
     })
 
+@app.route('/usage', methods=['GET'])
+def get_usage():
+    db = DBConnection()
+    usage = db.get_usage()
+    return jsonify({
+        "requests": usage
+    })
+
 @app.route('/', methods=['GET'])
 def renderIndex():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=False, use_reloader=False)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=True)

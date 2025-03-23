@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>proverka.co - AI Детектор</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #111827;
+      --accent: #4f46e5;
+      --bg: #f9fafb;
+      --border: #e5e7eb;
+      --gray-light: #f3f4f6;
+      --dark: #0f172a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    main {
+      max-width: 760px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    p.subheading {
+      font-size: 1.1rem;
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 160px;
+      border: 1px solid var(--border);
+      padding: 15px;
+      font-size: 1rem;
+      border-radius: 10px;
+      resize: none;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+
+    .info {
+      margin-top: 25px;
+      font-size: 0.95rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    #resultBox {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--gray-light);
+      transition: all 0.3s ease;
+    }
+
+    .highlight {
+  background-color: #e0e7ff; /* light purple */
+  color: #3730a3;            /* deep indigo text */
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+    footer {
+      margin-top: 80px;
+      padding: 60px 20px;
+      background: var(--dark);
+      color: white;
+      text-align: center;
+    }
+
+    .faq-section {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-section h2 {
+      color: #818cf8;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .faq-item {
+      border-top: 1px solid #334155;
+      padding: 30px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: 1px solid #334155;
+    }
+
+    .faq-section h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .faq-section p {
+      font-size: 1rem;
+      color: #d1d5db;
+      margin-bottom: 0;
+    }
+
+    .loader {
+      width: 40px;
+      height: 40px;
+      margin: 20px auto;
+      border: 4px solid var(--accent);
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    a[href*="index_gr.html"]:hover {
+  background: #e0e7ff;
+}
+header {
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Contains layout & spacing */
+.header-container {
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4f46e5;
+  }
+
+  .right-side {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .burger {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    min-width: 160px;
+    text-align: center;
+  }
+
+  .menu .label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    background: none;
+    padding: 4px 0;
+    cursor: default;
+  }
+
+  .menu a {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #4f46e5;
+    transition: background 0.2s;
+  }
+
+  .menu a:hover {
+    background: #e0e7ff;
+  }
+
+  .language-links {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .language-links a {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #4f46e5;
+    transition: background 0.2s;
+  }
+
+  .language-links a:hover {
+    background: #e0e7ff;
+  }
+
+  .highlight-pop {
+    background-color: #4f46e5;
+    color: white;
+    transition: all 0.2s ease;
+    transform: scale(1.2);
+    border-radius: 10px;
+    padding: 5px;
+  }
+  
+  .usage {
+    transition: all 0.2s ease;
+  }
+
+  .desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+  @media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
+
+  @media (max-width: 768px) {
+    .burger {
+      display: block;
+    }
+
+    .language-links {
+      display: none;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .menu {
+      display: none !important;
+    }
+  }
+  @media (max-width: 768px) {
+  main {
+    margin-top: 20px;  /* or 0 if you want no gap */
+  }
+}
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">proverka.co</div>
+  
+      <!-- Usage counter (desktop only) -->
+      <div class="usage desktop-only"></div>
+  
+      <div class="right-side">
+        <!-- Desktop language section -->
+        <div class="language-links">
+          <a href="/gr">🇬🇷 Greek</a>
+          <a href="/ro">🇷🇴 Romanian</a>
+          <a href="/bg">🇧🇬 Bulgarian</a>
+          <a href="/mk">🇲🇰 Macedonian</a>
+        </div>
+  
+        <!-- Burger icon -->
+        <div class="burger" onclick="toggleMenu()">☰</div>
+  
+        <!-- Burger menu for mobile -->
+        <div id="langMenu" class="menu">
+          <!-- Usage counter (mobile only) -->
+          <div class="usage mobile-only" style="margin-bottom: 10px;"></div>
+  
+          <a href="/gr">🇬🇷 Greek</a>
+          <a href="/ro">🇷🇴 Romanian</a>
+          <a href="/bg">🇧🇬 Bulgarian</a>
+          <a href="/mk">🇲🇰 Macedonian</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Сазнај да ли је текст написан од стране човека или AI-а.</h1>
+    <p class="subheading">Брз алат за проверу садржаја</p>
+
+    <div id="tokenDisplay" class="info">Преосталих провера: –</div>
+
+    <textarea id="inputText" placeholder="Унеси свој текст овде…"></textarea>
+    <button id="checkBtn">Провери текст</button>
+
+    <div id="resultBox"></div>
+  </main>
+
+  <footer>
+    <div class="faq-section">
+      <h2>Често постављана питања</h2>
+  
+      <div class="faq-item">
+        <h3>🧠 Шта је proverka.co?</h3>
+        <p>
+            Proverka.co је први румунски алат који открива да ли је неки текст написан од стране човека или генерисан од вештачке интелигенције. Развио га је StartUp тим са “AUBG” и обучен је посебно за грчки језик. Наша мисија је да вратимо поверење у писану реч – у образовању, медијима и професионалном окружењу.        </p>
+      </div>
+  
+      <div class="faq-item">
+        <hr style="border: none;">
+        <h3>⚙️ Како функционише алат?</h3>
+        <p>
+            Само унеси текст у поље, кликни на „Провери текст“ и сачекај неколико секунди. Добићеш јасну анализу да ли је текст написан од стране човека или AI-а, на ком је језику садржај, колики је проценат лажног садржаја и који делови су сумњиви.      </p>
+      </div>
+  
+      <div class="faq-item">
+        <hr style="border: none;">
+        <h3>📊 Шта чини proverka.co другачијим?</h3>
+        <p>
+            Proverka.co је развијен и обучен посебно за бугарски језик и контекст. Креиран је од стране бугарског тима са фокусом на тачност, поузданост и практичну употребу у образовању и професионалном окружењу. Наш алгоритам се стално самоусавршава како би пружао све боље резултате.        </p>
+      </div>
+  
+      <div class="faq-item">
+        <hr style="border: none;">
+        <h3>🚀 Шта планирате за будућност?</h3>
+        <p>
+            Тренутно развијамо систем који ће се интегрисати са школама и универзитетима. Он ће моћи да чува претходне текстове ученика и студената, да упоређује нове са њима и да открива промене у стилу и изразу. На тај начин ћемо помоћи у откривању злоупотреба вештачке интелигенције и заштитити аутентичност писања.        </p>
+      </div>
+    </div>
+    <div style="margin-top: 40px; font-size: 0.75rem; color: #6b7280; text-align: center;">
+        Креирано од стране Павела Димитрова, Николе Костова, Наталия Василеве, Тодора Мицина и Криса Иванова с љубављу за AUBG StartUp Weekend! ❤️
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+    const menu = document.getElementById("langMenu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+  }
+
+  document.addEventListener("click", function (e) {
+    const menu = document.getElementById("langMenu");
+    const burger = document.querySelector(".burger");
+    if (!menu.contains(e.target) && !burger.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
+    const langToFlag = (lang) => {
+      const map = {
+        en: '🇺🇸',
+    bg: '🇧🇬',
+    sr: '🇷🇸', // Serbian
+    hr: '🇭🇷', // Croatian
+    mk: '🇲🇰', // Macedonian
+    ro: '🇷🇴', // Romanian
+    el: '🇬🇷', // Greek
+    sq: '🇦🇱', // Albanian
+    bs: '🇧🇦', // Bosnian
+    sl: '🇸🇮', // Slovenian
+    hu: '🇭🇺', // Hungarian
+    tr: '🇹🇷', // Turkish
+
+    fr: '🇫🇷',
+    de: '🇩🇪',
+    es: '🇪🇸',
+    it: '🇮🇹',
+    un: '❔', // Unknown
+      };
+      return map[lang] || '🌐';
+    };
+
+    document.getElementById('checkBtn').addEventListener('click', detectText);
+
+    async function fetchTokens() {
+      try {
+        const res = await fetch('/tokens');
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('tokenDisplay').innerText = "Преосталих провера: " + data.tokens_left;
+        }
+      } catch {
+        document.getElementById('tokenDisplay').innerText = "Преосталих провера: Грешка";
+      }
+    }
+
+    function getResultLabel(percentage) {
+  const val = Number(percentage);
+  if (val <= 20) return "✅ Људски текст";
+  if (val <= 49) return "🟡 Мешовит текст (Прерађен од стране AI-а)";
+  if (val <= 79) return "🟠 Вероватно генерисан од стране AI-а";
+  return "❌ Скоро сигурно генерисан од стране AI-а";
+}
+
+    async function detectText() {
+      const text = document.getElementById('inputText').value;
+      const resultDiv = document.getElementById('resultBox');
+      resultDiv.innerHTML = '<div class="loader"></div>';
+
+      try {
+        const res = await fetch('/detect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+          resultDiv.innerHTML = `<p style='color:red;'>❌ ${data.message}</p>`;
+          document.getElementById('tokenDisplay').innerText = "Преосталих провера: 0";
+          return;
+        }
+
+        const result = data.data;
+        const special = result.specialSentences || [];
+
+        let highlightedText = text;
+
+      // Sort longer sentences first to avoid nested replacements
+      special.sort((a, b) => b.length - a.length);
+
+      special.forEach(sentence => {
+        const safeSentence = sentence
+          .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          .replace(/\s+/g, '\\s+'); // Match flexible whitespace
+
+        const regex = new RegExp(safeSentence, 'gi');
+        highlightedText = highlightedText.replace(
+          regex,
+          match => `<span class="highlight">${match}</span>`
+        );
+      });
+
+        resultDiv.innerHTML = `
+          <p><strong>Резултат:</strong> ${getResultLabel(result.fakePercentage)}</p>
+          <p><strong>Језик:</strong> ${langToFlag(result.detected_language)} (${result.detected_language})</p>
+          <p><strong>Проценат лажног садржаја:</strong> ${result.fakePercentage}%</p>
+          <p><strong>Маркиран текст:</strong></p>
+          <div style="white-space: pre-wrap;">${highlightedText}</div>
+        `;
+
+        document.getElementById('tokenDisplay').innerText = "Преосталих провера: " + data.tokens_left;
+      } catch (err) {
+        console.error("Грешка при провери:", err);
+        resultDiv.innerHTML = "❌ Дошло је до грешке при обради.";
+      }
+    }
+
+    setInterval(() => {
+  fetch('/usage')
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP грешка! статус: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      const usageText = `${data.requests} Провера до сада.`;
+
+      // Get all .usage elements (e.g. desktop + mobile)
+      const usageEls = document.querySelectorAll('.usage');
+
+      // Only update if the first one hasn’t changed
+      if (usageEls.length > 0 && usageEls[0].innerHTML === usageText) {
+        console.log('No change in usage count');
+        return;
+      }
+
+      usageEls.forEach(el => {
+        el.innerHTML = usageText;
+        el.classList.add('highlight-pop');
+
+        setTimeout(() => {
+          el.classList.remove('highlight-pop');
+        }, 2000);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching /usage:', error);
+    });
+}, 1000);
+
+    fetchTokens();
+  </script>
+</body>
+</html>
