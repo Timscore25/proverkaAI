@@ -454,7 +454,7 @@ header {
     function getResultLabel(percentage) {
   const val = Number(percentage);
   if (val <= 20) return "✅ Човешки текст";
-  if (val <= 49) return "🟡 Смесен текст (Преработен от AI)";
+  if (val <= 49) return "🟡 Преработен AI текст или Humanizer";
   if (val <= 79) return "🟠 Вероятно генериран от AI";
   return "❌ Почти сигурно генериран от AI";
 }
